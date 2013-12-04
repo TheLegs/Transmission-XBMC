@@ -1,7 +1,9 @@
 import re
 import socket
 from urllib2 import urlopen
+from operator import itemgetter
 from BeautifulSoup import BeautifulSoup, BeautifulStoneSoup
+
 
 socket.setdefaulttimeout(15)
 
@@ -59,13 +61,15 @@ class TorrentReactor(Search):
         f = urlopen(url)
         soup = BeautifulStoneSoup(f.read())
         for item in soup.findAll('item'):
-            (seeds, leechers) = re.findall('Status: (\d+) seeders, (\d+) leecher', item.description.text)[0]
+            (seeds, leechers) = re.findall('Status: (\d+) seeder, (\d+) leecher', item.description.text)[0]
+            title = re.findall(r'\[(?:[^\]])*\] (.*)', item.title.text)[0]
             torrents.append({
                 'url': item.enclosure['url'],
-                'name': item.title.text,
+                'name': title,
                 'seeds': int(seeds),
                 'leechers': int(leechers),
             })
+        torrents = sorted(torrents, key=itemgetter('seeds'), reverse=True)
         return torrents
 
 if __name__ == '__main__':
