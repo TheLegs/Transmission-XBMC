@@ -32,7 +32,7 @@ class Mininova(Search):
         return torrents
 class TPB(Search):
     def __init__(self):
-        self.search_uri = 'http://thepiratebay.se/search/%s/'
+        self.search_uri = 'http://thepiratebay.ac/search/%s/'
     def search(self, terms):
         torrents = []
         url = self.search_uri % '+'.join(terms.split(' '))
